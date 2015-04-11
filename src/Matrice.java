@@ -6,11 +6,17 @@ import java.util.Arrays;
  * Cette classe represente une matrice de format n par m.
  * Elle contient également quelques méthodes afin de manipuler les matrices.
  *
+ * @author Nicolas Lamoureux
+ *         Code permanent : LAMN19109003
+ *         Courriel : lamoureux.nicolas.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
  * @author Marc-Antoine Sauvé
  *         Code permanent : SAUM13119008
  *         Courriel : marc-antoine.sauve.2@courrier.uqam.ca
  *         Cours : INF2120-10
- * @version 2015-02-09
+ *
+ * @version 2015-04-09
  */
 public class Matrice implements IMatrice {
 

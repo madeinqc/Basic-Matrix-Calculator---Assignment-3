@@ -14,7 +14,7 @@ import javax.swing.JFrame;
  *
  * @author Nicolas Lamoureux
  *         Code permanent : LAMN19109003
- *         Courriel : lamoureux.nicolas1@gmail.com  // TODO Mettre ton courriel uqam?
+ *         Courriel : lamoureux.nicolas.2@courrier.uqam.ca
  *         Cours : INF2120-10
  *
  * @author Marc-Antoine Sauvé

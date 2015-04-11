@@ -5,7 +5,19 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by madeinqc on 4/9/15.
+ * TODO Complete this
+ *
+ * @author Nicolas Lamoureux
+ *         Code permanent : LAMN19109003
+ *         Courriel : lamoureux.nicolas.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @author Marc-Antoine Sauvé
+ *         Code permanent : SAUM13119008
+ *         Courriel : marc-antoine.sauve.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @version 2015-04-09
  */
 public class MatriceParser {
     public static ArrayList<AbstractMap.SimpleEntry<String, IMatrice>> parseFile(String fileName) throws IOException {
