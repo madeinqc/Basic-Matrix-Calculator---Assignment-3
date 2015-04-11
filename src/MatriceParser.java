@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -20,13 +19,13 @@ import java.util.*;
  * @version 2015-04-09
  */
 public class MatriceParser {
-    public static ArrayList<AbstractMap.SimpleEntry<String, IMatrice>> parseFile(String fileName) throws IOException {
-        ArrayList<AbstractMap.SimpleEntry<String, IMatrice>> matrices = new ArrayList<>();
+    public static ArrayList<NamedItem<IMatrice>> parseFile(String fileName) throws IOException {
+        ArrayList<NamedItem<IMatrice>> matrices = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] nameAndData = line.split(":");
-                matrices.add(new AbstractMap.SimpleEntry<>(nameAndData[0], createMatrixFromString(nameAndData[1])));
+                matrices.add(new NamedItem<IMatrice>(nameAndData[0], createMatrixFromString(nameAndData[1])));
             }
         }
         return matrices;

@@ -52,7 +52,7 @@ public class TP3 extends WindowAdapter implements ActionListener {
      * VARIABLES D'INSTANCE
      ************************************/
     //...
-    ArrayList<SimpleEntry<String, IMatrice>> matrices;
+    ArrayList<NamedItem<IMatrice>> matrices;
 
 
     /************************************
@@ -73,7 +73,6 @@ public class TP3 extends WindowAdapter implements ActionListener {
         } catch (IOException e) {
             matrices = new ArrayList<>();
         }
-        matrices.add(0, new SimpleEntry<String, IMatrice>("", null));
         init();
     }
 
