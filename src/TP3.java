@@ -1,4 +1,4 @@
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -6,7 +6,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 
 /**
@@ -59,10 +59,14 @@ public class TP3 extends WindowAdapter implements ActionListener {
      * COMPOSANTS GRAPHIQUES
      ************************************/
     //fenetre principale
-    private JFrame fenetre;
+    private JFrame fenetre;;
 
     //...
-
+    private MatrixEditor firstMatrixEditor;
+    private JButton addMatricesButton;
+    private JButton multiplicateMatricesButton;
+    private MatrixEditor secondMatrixEditor;
+    private JTextArea resultTextArea;
 
     /**
      * Constructeur qui initialise l'application.
@@ -73,6 +77,7 @@ public class TP3 extends WindowAdapter implements ActionListener {
         } catch (IOException e) {
             matrices = new ArrayList<>();
         }
+        matrices.add(0, new NamedItem<IMatrice>("", null));
         init();
     }
 
@@ -85,14 +90,46 @@ public class TP3 extends WindowAdapter implements ActionListener {
         fenetre = new JFrame(TITRE_FENETRE);
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setResizable(false);
-        //centrer la fenetre principale dans l'Ã©cran
+        //centrer la fenetre principale dans l'écran
         fenetre.setBounds(LARG_ECRAN / 2 - LARG_FENETRE / 2,
                 HAUT_ECRAN / 2 - HAUT_FENETRE / 2,
                 LARG_FENETRE, HAUT_FENETRE);
 
 
         //...
+        JPanel container = new JPanel();
+        container.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        container.setLayout(new BorderLayout(0, 10));
+        fenetre.setContentPane(container);
 
+        firstMatrixEditor = new MatrixEditor(matrices);
+        firstMatrixEditor.setPreferredSize(new Dimension(460, 385));
+        fenetre.getContentPane().add(firstMatrixEditor, BorderLayout.WEST);
+
+        JPanel operationsPanel = new JPanel();
+        operationsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
+        operationsPanel.setBorder(BorderFactory.createMatteBorder(0, 2, 0, 2, Color.GRAY));
+        operationsPanel.setPreferredSize(new Dimension(80, 385));
+        fenetre.getContentPane().add(operationsPanel, BorderLayout.CENTER);
+
+        addMatricesButton = new JButton("+");
+        addMatricesButton.setVerticalAlignment(JButton.CENTER);
+        addMatricesButton.setPreferredSize(new Dimension(50, addMatricesButton.getPreferredSize().height));
+        operationsPanel.add(addMatricesButton);
+
+        multiplicateMatricesButton = new JButton("X");
+        multiplicateMatricesButton.setVerticalAlignment(JButton.CENTER);
+        multiplicateMatricesButton.setPreferredSize(new Dimension(50, multiplicateMatricesButton.getPreferredSize().height));
+        operationsPanel.add(multiplicateMatricesButton);
+
+        secondMatrixEditor = new MatrixEditor(matrices);
+        secondMatrixEditor.setPreferredSize(new Dimension(460, 385));
+        fenetre.getContentPane().add(secondMatrixEditor, BorderLayout.EAST);
+
+        resultTextArea = new JTextArea();
+        resultTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        resultTextArea.setPreferredSize(new Dimension(1000, 245));
+        fenetre.getContentPane().add(resultTextArea, BorderLayout.SOUTH);
 
 
         //Laisser cette instruction à la fin de l'initialisation des composants

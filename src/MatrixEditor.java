@@ -23,6 +23,15 @@ import java.util.ArrayList;
  */
 public class MatrixEditor extends JPanel {
 
+    private JTextArea initializationTextArea;
+    private MatrixGrid matrixGrid = null;
+    private JPanel newMatrixPanel;
+    private JComboBox<Integer> newColumnNumberSelector;
+    private JComboBox<Integer> newLineNumberSelector;
+    private JButton confirmNewMatrixButton;
+    private JLabel multiplicatorLabel;
+    private JPanel matrixPanel;
+
     public enum EditorState {
         initialization, operation, editing, newMatrix
     }
@@ -52,43 +61,104 @@ public class MatrixEditor extends JPanel {
 
         setLayout(new GridLayout(3, 1));
 
-        setLoaderSection();
-        setMatrixSection();
-        setEditionSection();
+        setupLoaderSection();
+        setupMatrixSection();
+        setupEditionSection();
+
+        updateUIFromState();
     }
 
-    private void setLoaderSection() {
+    private void updateUIFromState() {
+        matrixPanel.removeAll();
+
+        switch (state)
+        {
+            case initialization:
+                matrixSelector.setSelectedIndex(0);
+                matrixPanel.add(initializationTextArea);
+                break;
+
+            case operation:
+                editButton.setText("Éditer");
+                matrixPanel.add(matrixGrid);
+                break;
+
+            case editing:
+                editButton.setText("Sauvegarder");
+                matrixPanel.add(matrixGrid);
+                break;
+
+            case newMatrix:
+                matrixPanel.add(newMatrixPanel);
+                break;
+        }
+
+        deleteButton.setEnabled(state == EditorState.operation);
+        editButton.setEnabled(state == EditorState.operation || state == EditorState.editing);
+        addLineButton.setEnabled(state == EditorState.editing);
+        addColumnButton.setEnabled(state == EditorState.editing);
+        removeLineButton.setEnabled(state == EditorState.editing);
+        removeColumnButton.setEnabled(state == EditorState.editing);
+        transposedButton.setEnabled(state == EditorState.operation);
+        multiplicatorLabel.setEnabled(state == EditorState.operation);
+        multiplicatorTextField.setEnabled(state == EditorState.operation);
+        if (state == EditorState.operation)
+            multiplicatorTextField.setBackground(Color.YELLOW);
+        else
+            multiplicatorTextField.setBackground(Color.WHITE);
+    }
+
+    private void setupLoaderSection() {
         loaderSection = new JPanel();
         loaderSection.setLayout(new FlowLayout());
 
         matrixSelector = new JComboBox<NamedItem<IMatrice>>();
         loaderSection.add(matrixSelector);
+        matrixSelector.setPreferredSize(new Dimension(120, matrixSelector.getPreferredSize().height));
         matrixSelector.addActionListener(new MatrixSelectorActionListener());
+        for (NamedItem<IMatrice> namedMatrix : matrices) {
+            matrixSelector.addItem(namedMatrix);
+        }
 
         deleteButton = new JButton("Supprimer");
         loaderSection.add(deleteButton);
         deleteButton.addActionListener(new DeleteActionListener());
 
-        add(loaderSection);
+        add(loaderSection, 0);
     }
 
-    private void setMatrixSection() {
-        switch (state)
-        {
-            case editing:
-                break;
-            case initialization:
-                break;
-            case newMatrix:
-                break;
-            case operation:
-                break;
+    private void setupMatrixSection() {
+        matrixPanel = new JPanel();
+        add(matrixPanel);
+
+        initializationTextArea = new JTextArea();
+        initializationTextArea.setText("Créez une nouvelle matrice en cliquant\n\r" +
+                "sur le bouton [ Nouvelle ] ci-dessous ou\n\r" +
+                "choisissez une matrice existante dans\n\r" +
+                "la liste déroulante ci-dessus.");
+
+        newMatrixPanel = new JPanel();
+        newMatrixPanel.setLayout(new GridLayout(3, 2));
+        newMatrixPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        newMatrixPanel.add(new JLabel("Nombre de lignes"));
+        newColumnNumberSelector = new JComboBox<>();
+        newMatrixPanel.add(newColumnNumberSelector);
+        newLineNumberSelector = new JComboBox<>();
+        newMatrixPanel.add(newLineNumberSelector);
+
+        for (int i = 1; i <= 8; i++) {
+            newColumnNumberSelector.addItem(i);
+            newLineNumberSelector.addItem(i);
         }
+
+        confirmNewMatrixButton = new JButton("OK");
+        confirmNewMatrixButton.addActionListener(new confirmNewMatrixActionListener());
+        newMatrixPanel.add(confirmNewMatrixButton);
     }
 
-    private void setEditionSection() {
+    private void setupEditionSection() {
         editionSection = new JPanel();
-        editionSection.setLayout(new FlowLayout());
+        editionSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         newButton = new JButton("Nouvelle");
         editionSection.add(newButton);
@@ -118,9 +188,12 @@ public class MatrixEditor extends JPanel {
         editionSection.add(transposedButton);
         transposedButton.addActionListener(new TransposedActionListener());
 
-        editionSection.add(new JLabel("Mult. par"));
+        multiplicatorLabel = new JLabel("Mult. par");
+        editionSection.add(multiplicatorLabel);
 
         multiplicatorTextField = new JTextField();
+        multiplicatorTextField.setPreferredSize(new Dimension(40,
+                multiplicatorTextField.getPreferredSize().height));
         multiplicatorTextField.addKeyListener(new MultiplicatorKeyListener());
         editionSection.add(multiplicatorTextField);
 
@@ -269,6 +342,18 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void keyReleased(KeyEvent e) {
+
+        }
+    }
+
+    private class confirmNewMatrixActionListener implements ActionListener {
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
         }
     }
