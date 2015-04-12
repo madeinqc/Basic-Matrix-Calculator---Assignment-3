@@ -57,11 +57,6 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
     private EditorState state = EditorState.initialization;
 
     public ArrayList<NamedItem<IMatrice>> getMatrices() {
-        System.out.println("start");
-        for (NamedItem<IMatrice> matriceNamedItem : matrices) {
-            System.out.println(matriceNamedItem.getName());
-        }
-        System.out.println("end");
         return matrices;
     }
 
@@ -239,10 +234,10 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
     }
 
     private void saveCurrentMatrix(String name) {
-        NamedItem<IMatrice> namedMatrix = new NamedItem<IMatrice>(name, currentMatrix);
+        NamedItem<IMatrice> namedMatrix = new NamedItem<>(name, currentMatrix);
 
+        matrices.add(namedMatrix);
         matrixAdded(namedMatrix);
-
         matrixSelector.setSelectedIndex(matrixSelector.getItemCount() - 1);
 
         for (MatrixEditorListener listener : listeners) {
@@ -254,8 +249,6 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
 
     @Override
     public void matrixAdded(NamedItem<IMatrice> namedMatrix) {
-        System.out.println("adding");
-        matrices.add(namedMatrix);
         matrixSelector.addItem(namedMatrix);
     }
 
@@ -365,6 +358,23 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
             updateUIFromState();
             currentMatrix = null;
             matrixGrid = null;
+        }
+    }
+
+    private class confirmNewMatrixActionListener implements ActionListener {
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            state = EditorState.editing;
+            int numLine = newLineNumberSelector.getItemAt(newLineNumberSelector.getSelectedIndex());
+            int numColumn = newColumnNumberSelector.getItemAt(newColumnNumberSelector.getSelectedIndex());
+            currentMatrix = new Matrice(numLine, numColumn, 0.0);
+            matrixGrid = new MatrixGrid(currentMatrix, state);
+            updateUIFromState();
         }
     }
 
@@ -504,23 +514,6 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
         @Override
         public void keyReleased(KeyEvent e) {
 
-        }
-    }
-
-    private class confirmNewMatrixActionListener implements ActionListener {
-        /**
-         * Invoked when an action occurs.
-         *
-         * @param e
-         */
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            state = EditorState.editing;
-            int numLine = newLineNumberSelector.getItemAt(newLineNumberSelector.getSelectedIndex()).intValue();
-            int numColumn = newColumnNumberSelector.getItemAt(newColumnNumberSelector.getSelectedIndex()).intValue();
-            currentMatrix = new Matrice(numLine, numColumn, 0.0);
-            matrixGrid = new MatrixGrid(currentMatrix, state);
-            updateUIFromState();
         }
     }
 }

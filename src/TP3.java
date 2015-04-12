@@ -56,7 +56,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
      * COMPOSANTS GRAPHIQUES
      ************************************/
     //fenetre principale
-    private JFrame fenetre;;
+    private JFrame fenetre;
 
     //...
     private MatrixEditor firstMatrixEditor;
@@ -70,7 +70,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
      */
     public TP3() {
         try {
-            matrices = MatrixParser.parseFile("matrices.txt");
+            matrices = MatrixParser.parseFile(FIC_MATRICES);
         } catch (IOException e) {
             matrices = new ArrayList<>();
         }
@@ -158,7 +158,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
     public void windowClosing(WindowEvent e) {
         try {
             System.out.println("run");
-            MatrixWriter.writeFile("matrices.txt", firstMatrixEditor.getMatrices());
+            MatrixWriter.writeFile(FIC_MATRICES, firstMatrixEditor.getMatrices());
         } catch (IOException e1) {
             JOptionPane.showMessageDialog(fenetre, "Impossible d'enregistrer les matrices", "ERREUR", JOptionPane.ERROR_MESSAGE);
         }
