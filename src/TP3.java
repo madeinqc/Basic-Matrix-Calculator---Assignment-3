@@ -1,10 +1,7 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -24,7 +21,7 @@ import javax.swing.*;
  *
  * @version 2015-04-09
  */
-public class TP3 extends WindowAdapter implements ActionListener {
+public class TP3 extends WindowAdapter implements MatrixEditorListener {
 
     /************************************
      * CONSTANTES DE CLASSE
@@ -73,7 +70,7 @@ public class TP3 extends WindowAdapter implements ActionListener {
      */
     public TP3() {
         try {
-            matrices = MatriceParser.parseFile("matrices.txt");
+            matrices = MatrixParser.parseFile("matrices.txt");
         } catch (IOException e) {
             matrices = new ArrayList<>();
         }
@@ -115,11 +112,13 @@ public class TP3 extends WindowAdapter implements ActionListener {
         addMatricesButton = new JButton("+");
         addMatricesButton.setVerticalAlignment(JButton.CENTER);
         addMatricesButton.setPreferredSize(new Dimension(50, addMatricesButton.getPreferredSize().height));
+        addMatricesButton.setEnabled(false);
         operationsPanel.add(addMatricesButton);
 
         multiplicateMatricesButton = new JButton("X");
         multiplicateMatricesButton.setVerticalAlignment(JButton.CENTER);
         multiplicateMatricesButton.setPreferredSize(new Dimension(50, multiplicateMatricesButton.getPreferredSize().height));
+        multiplicateMatricesButton.setEnabled(false);
         operationsPanel.add(multiplicateMatricesButton);
 
         secondMatrixEditor = new MatrixEditor(matrices);
@@ -130,6 +129,11 @@ public class TP3 extends WindowAdapter implements ActionListener {
         resultTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         resultTextArea.setPreferredSize(new Dimension(1000, 245));
         fenetre.getContentPane().add(resultTextArea, BorderLayout.SOUTH);
+
+        firstMatrixEditor.addListener(secondMatrixEditor);
+        secondMatrixEditor.addListener(firstMatrixEditor);
+        firstMatrixEditor.addListener(this);
+        secondMatrixEditor.addListener(this);
 
 
         //Laisser cette instruction à la fin de l'initialisation des composants
@@ -145,13 +149,6 @@ public class TP3 extends WindowAdapter implements ActionListener {
 
     }
 
-    @Override
-    public void actionPerformed (ActionEvent e) {
-
-        //TODO...
-
-    }
-
     /**
      * A la fermeture de la fenetre, enregistrement des toutes les matrices
      * dans le fichier FIC_MATRICES.
@@ -159,7 +156,12 @@ public class TP3 extends WindowAdapter implements ActionListener {
      */
     @Override
     public void windowClosing(WindowEvent e) {
-        //TODO...
+        try {
+            System.out.println("run");
+            MatrixWriter.writeFile("matrices.txt", firstMatrixEditor.getMatrices());
+        } catch (IOException e1) {
+            JOptionPane.showMessageDialog(fenetre, "Impossible d'enregistrer les matrices", "ERREUR", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 
@@ -167,4 +169,26 @@ public class TP3 extends WindowAdapter implements ActionListener {
         new TP3();
     }
 
+    @Override
+    public void matrixAdded(NamedItem<IMatrice> namedMatrix) {
+
+    }
+
+    @Override
+    public void matrixRemoved(NamedItem<IMatrice> namedMatrix) {
+
+    }
+
+    @Override
+    public void stateChanged(MatrixEditor.EditorState state) {
+        if (firstMatrixEditor != null && secondMatrixEditor != null &&
+                firstMatrixEditor.getState() == MatrixEditor.EditorState.operation &&
+                secondMatrixEditor.getState() == MatrixEditor.EditorState.operation) {
+            addMatricesButton.setEnabled(true);
+            multiplicateMatricesButton.setEnabled(true);
+        } else {
+            addMatricesButton.setEnabled(false);
+            multiplicateMatricesButton.setEnabled(false);
+        }
+    }
 }

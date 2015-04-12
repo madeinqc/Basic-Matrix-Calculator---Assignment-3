@@ -119,6 +119,23 @@ public class Matrice implements IMatrice {
     }
 
     /**
+     * Constructeur de copie. Construit une copie de surface de autreMatrice.
+     *
+     * @param autreMatrice la matrice a copier.
+     */
+    public Matrice(IMatrice autreMatrice) {
+        numColonnes = autreMatrice.getNumColonnes();
+        numLignes = autreMatrice.getNumLignes();
+        elements = new ArrayList<>();
+
+        for (int i = 0; i < numLignes; i++) {
+            for (int j = 0; j < numColonnes; j++) {
+                elements.add(autreMatrice.getElement(i, j));
+            }
+        }
+    }
+
+    /**
      * Retourne l'index de l'ArrayList correspondant à la ligne et à colonne fournies.
      *
      * @param noLigne le numero de la ligne dans cette matrice.

@@ -21,7 +21,7 @@ import java.util.ArrayList;
  *
  * @version 2015-04-09
  */
-public class MatrixEditor extends JPanel {
+public class MatrixEditor extends JPanel implements MatrixEditorListener {
 
     private JTextArea initializationTextArea;
     private MatrixGrid matrixGrid = null;
@@ -31,18 +31,18 @@ public class MatrixEditor extends JPanel {
     private JButton confirmNewMatrixButton;
     private JLabel multiplicatorLabel;
     private JPanel matrixPanel;
+    private ArrayList<MatrixEditorListener> listeners = new ArrayList<>();
 
     public enum EditorState {
         initialization, operation, editing, newMatrix
     }
 
+    IMatrice currentMatrix = null;
     private ArrayList<NamedItem<IMatrice>> matrices;
 
     private JPanel loaderSection;
     private JComboBox<NamedItem<IMatrice>> matrixSelector;
     private JButton deleteButton;
-
-
 
     private JPanel editionSection;
     private JButton newButton;
@@ -56,10 +56,31 @@ public class MatrixEditor extends JPanel {
 
     private EditorState state = EditorState.initialization;
 
+    public ArrayList<NamedItem<IMatrice>> getMatrices() {
+        System.out.println("start");
+        for (NamedItem<IMatrice> matriceNamedItem : matrices) {
+            System.out.println(matriceNamedItem.getName());
+        }
+        System.out.println("end");
+        return matrices;
+    }
+
+    public EditorState getState() {
+        return state;
+    }
+
+    public void addListener(MatrixEditorListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(MatrixEditorListener listener) {
+        listeners.remove(listener);
+    }
+
     public MatrixEditor(ArrayList<NamedItem<IMatrice>> matrices) {
         this.matrices = matrices;
 
-        setLayout(new GridLayout(3, 1));
+        setLayout(new BorderLayout(0, 6));
 
         setupLoaderSection();
         setupMatrixSection();
@@ -89,6 +110,7 @@ public class MatrixEditor extends JPanel {
                 break;
 
             case newMatrix:
+                matrixSelector.setSelectedIndex(0);
                 matrixPanel.add(newMatrixPanel);
                 break;
         }
@@ -106,6 +128,15 @@ public class MatrixEditor extends JPanel {
             multiplicatorTextField.setBackground(Color.YELLOW);
         else
             multiplicatorTextField.setBackground(Color.WHITE);
+
+        matrixPanel.validate();
+        matrixPanel.repaint();
+
+        for (MatrixEditorListener listener : listeners) {
+            if (listener != null) {
+                listener.stateChanged(state);
+            }
+        }
     }
 
     private void setupLoaderSection() {
@@ -115,21 +146,21 @@ public class MatrixEditor extends JPanel {
         matrixSelector = new JComboBox<NamedItem<IMatrice>>();
         loaderSection.add(matrixSelector);
         matrixSelector.setPreferredSize(new Dimension(120, matrixSelector.getPreferredSize().height));
-        matrixSelector.addActionListener(new MatrixSelectorActionListener());
         for (NamedItem<IMatrice> namedMatrix : matrices) {
             matrixSelector.addItem(namedMatrix);
         }
+        matrixSelector.addActionListener(new MatrixSelectorActionListener());
 
         deleteButton = new JButton("Supprimer");
         loaderSection.add(deleteButton);
         deleteButton.addActionListener(new DeleteActionListener());
 
-        add(loaderSection, 0);
+        add(loaderSection, BorderLayout.NORTH);
     }
 
     private void setupMatrixSection() {
         matrixPanel = new JPanel();
-        add(matrixPanel);
+        add(matrixPanel, BorderLayout.CENTER);
 
         initializationTextArea = new JTextArea();
         initializationTextArea.setText("Créez une nouvelle matrice en cliquant\n\r" +
@@ -140,17 +171,19 @@ public class MatrixEditor extends JPanel {
         newMatrixPanel = new JPanel();
         newMatrixPanel.setLayout(new GridLayout(3, 2));
         newMatrixPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        newMatrixPanel.add(new JLabel("Nombre de lignes"));
-        newColumnNumberSelector = new JComboBox<>();
-        newMatrixPanel.add(newColumnNumberSelector);
+        newMatrixPanel.add(new JLabel("Nombre de lignes : "));
         newLineNumberSelector = new JComboBox<>();
         newMatrixPanel.add(newLineNumberSelector);
+        newMatrixPanel.add(new JLabel("Nombre de colonnes : "));
+        newColumnNumberSelector = new JComboBox<>();
+        newMatrixPanel.add(newColumnNumberSelector);
 
         for (int i = 1; i <= 8; i++) {
             newColumnNumberSelector.addItem(i);
             newLineNumberSelector.addItem(i);
         }
 
+        newMatrixPanel.add(new JPanel());
         confirmNewMatrixButton = new JButton("OK");
         confirmNewMatrixButton.addActionListener(new confirmNewMatrixActionListener());
         newMatrixPanel.add(confirmNewMatrixButton);
@@ -159,12 +192,13 @@ public class MatrixEditor extends JPanel {
     private void setupEditionSection() {
         editionSection = new JPanel();
         editionSection.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        editionSection.setPreferredSize(new Dimension(385, 80));
 
         newButton = new JButton("Nouvelle");
         editionSection.add(newButton);
         newButton.addActionListener(new NewActionListener());
 
-        editButton = new JButton("Edit");
+        editButton = new JButton("Éditer");
         editionSection.add(editButton);
         editButton.addActionListener(new EditActionListener());
 
@@ -197,7 +231,79 @@ public class MatrixEditor extends JPanel {
         multiplicatorTextField.addKeyListener(new MultiplicatorKeyListener());
         editionSection.add(multiplicatorTextField);
 
-        add(editionSection);
+        add(editionSection, BorderLayout.SOUTH);
+    }
+
+    private void showError(String error) {
+        JOptionPane.showMessageDialog(this, error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void saveCurrentMatrix(String name) {
+        NamedItem<IMatrice> namedMatrix = new NamedItem<IMatrice>(name, currentMatrix);
+
+        matrixAdded(namedMatrix);
+
+        matrixSelector.setSelectedIndex(matrixSelector.getItemCount() - 1);
+
+        for (MatrixEditorListener listener : listeners) {
+            if (listener != null) {
+                listener.matrixAdded(namedMatrix);
+            }
+        }
+    }
+
+    @Override
+    public void matrixAdded(NamedItem<IMatrice> namedMatrix) {
+        System.out.println("adding");
+        matrices.add(namedMatrix);
+        matrixSelector.addItem(namedMatrix);
+    }
+
+    @Override
+    public void matrixRemoved(NamedItem<IMatrice> namedMatrix) {
+        if (matrixSelector.getItemAt(matrixSelector.getSelectedIndex()) == namedMatrix) {
+            state = EditorState.initialization;
+            updateUIFromState();
+        }
+        matrices.remove(namedMatrix);
+        matrixSelector.removeItem(namedMatrix);
+    }
+
+    @Override
+    public void stateChanged(EditorState state) {
+
+    }
+
+    private String getNewMatrixName() {
+        String name = "";
+
+        do {
+            name = JOptionPane.showInputDialog(this, "Nom matrice:");
+            if (name != null) {
+                if (name.length() > 5 || name.equals("") || name.length() != name.replaceAll("[^A-Za-z0-9]", "").length()) {
+                    showError("Le nom de la matrice doit contenir entre 1 et 5 caractères alphanumériques !");
+                    name = "";
+                } else if (doesNameExist(name)) {
+                    showError("Une matrice portant ce nom existe déjà. Veuillez en choisir un autre.");
+                    name = "";
+                }
+            }
+        } while (name != null && name.equals(""));
+
+        return name;
+    }
+
+    private boolean doesNameExist(String name) {
+        boolean found = false;
+
+        for (NamedItem<IMatrice> namedMatrix : matrices)
+        {
+            if (namedMatrix.getName().equals(name)) {
+                found = true;
+            }
+        }
+
+        return found;
     }
 
     private class MatrixSelectorActionListener implements java.awt.event.ActionListener {
@@ -208,7 +314,19 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            if (matrixSelector.getSelectedIndex() == 0)
+            {
+                if (state != EditorState.newMatrix) {
+                    state = EditorState.initialization;
+                    currentMatrix = null;
+                    matrixGrid = null;
+                }
+            } else {
+                state = EditorState.operation;
+                currentMatrix = new Matrice(matrixSelector.getItemAt(matrixSelector.getSelectedIndex()).getItem());
+                matrixGrid = new MatrixGrid(currentMatrix, state);
+            }
+            updateUIFromState();
         }
     }
 
@@ -220,7 +338,16 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            NamedItem<IMatrice> matrix = matrixSelector.getItemAt(matrixSelector.getSelectedIndex());
+            matrixRemoved(matrix);
+            state = EditorState.initialization;
+            updateUIFromState();
 
+            for (MatrixEditorListener listener : listeners) {
+                if (listener != null) {
+                    listener.matrixRemoved(matrix);
+                }
+            }
         }
     }
 
@@ -232,7 +359,12 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            state = EditorState.newMatrix;
+            newColumnNumberSelector.setSelectedIndex(0);
+            newLineNumberSelector.setSelectedIndex(0);
+            updateUIFromState();
+            currentMatrix = null;
+            matrixGrid = null;
         }
     }
 
@@ -244,7 +376,25 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (state != EditorState.editing) {
+                state = EditorState.editing;
+                matrixGrid.setState(state);
+                matrixGrid.updateUIFromState();
+            } else {
+                if (matrixGrid.ValidateAndFillMatrix()) {
+                    String name = getNewMatrixName();
+                    if (name != null) {
+                        saveCurrentMatrix(name);
+                        state = EditorState.operation;
+                        matrixGrid.setState(state);
+                        matrixGrid.updateUIFromState();
+                    }
+                } else {
+                    showError("Tous les champs de la matrices doivent être des nombres.");
+                }
+            }
 
+            updateUIFromState();
         }
     }
 
@@ -256,7 +406,7 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            matrixGrid.addLine();
         }
     }
 
@@ -268,7 +418,7 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            matrixGrid.addColumn();
         }
     }
 
@@ -280,7 +430,7 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            matrixGrid.removeLine();
         }
     }
 
@@ -292,7 +442,7 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            matrixGrid.removeColumn();
         }
     }
 
@@ -304,7 +454,7 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            currentMatrix = matrixGrid.transposed();
         }
     }
 
@@ -314,11 +464,22 @@ public class MatrixEditor extends JPanel {
          * See the class description for {@link java.awt.event.KeyEvent} for a definition of
          * a key typed event.
          *
-         * @param e
+         * @param event
          */
         @Override
-        public void keyTyped(KeyEvent e) {
+        public void keyTyped(KeyEvent event) {
+            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                try {
+                    double multiplier = Double.parseDouble(multiplicatorTextField.getText());
 
+                    IMatrice result = new Matrice(currentMatrix);
+                    result.produit(multiplier);
+
+                    // TODO Show result in zone 4
+                } catch (NumberFormatException e) {
+                    showError("Le multiplicateur doit être un nombre.");
+                }
+            }
         }
 
         /**
@@ -354,7 +515,12 @@ public class MatrixEditor extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            state = EditorState.editing;
+            int numLine = newLineNumberSelector.getItemAt(newLineNumberSelector.getSelectedIndex()).intValue();
+            int numColumn = newColumnNumberSelector.getItemAt(newColumnNumberSelector.getSelectedIndex()).intValue();
+            currentMatrix = new Matrice(numLine, numColumn, 0.0);
+            matrixGrid = new MatrixGrid(currentMatrix, state);
+            updateUIFromState();
         }
     }
 }

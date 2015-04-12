@@ -51,4 +51,17 @@ public class NamedItem<T> {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NamedItem)) return false;
+
+        NamedItem namedItem = (NamedItem) o;
+
+        if (item != null ? !item.equals(namedItem.item) : namedItem.item != null) return false;
+        if (name != null ? !name.equals(namedItem.name) : namedItem.name != null) return false;
+
+        return true;
+    }
 }

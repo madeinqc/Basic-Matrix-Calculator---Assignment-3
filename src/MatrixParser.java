@@ -18,7 +18,7 @@ import java.util.*;
  *
  * @version 2015-04-09
  */
-public class MatriceParser {
+public class MatrixParser {
     public static ArrayList<NamedItem<IMatrice>> parseFile(String fileName) throws IOException {
         ArrayList<NamedItem<IMatrice>> matrices = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
