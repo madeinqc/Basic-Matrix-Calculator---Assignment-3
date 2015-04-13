@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * TODO Faire les commentaires de la classe.
  * Created by madeinqc on 4/11/15.
  */
 public class MatrixGrid extends JPanel {

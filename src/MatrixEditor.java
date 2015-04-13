@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 /**
- * TODO Fill this
+ * TODO Faire les commentaires de la classe.
  *
  * @author Nicolas Lamoureux
  *         Code permanent : LAMN19109003
@@ -58,6 +58,10 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
 
     public ArrayList<NamedItem<IMatrice>> getMatrices() {
         return matrices;
+    }
+
+    public NamedItem<IMatrice> getSelectedMatrix() {
+        return matrixSelector.getItemAt(matrixSelector.getSelectedIndex());
     }
 
     public EditorState getState() {

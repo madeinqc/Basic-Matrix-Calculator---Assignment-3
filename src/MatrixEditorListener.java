@@ -1,4 +1,5 @@
 /**
+ * TODO Faire les commentaires de la classe.
  * Created by madeinqc on 4/11/15.
  */
 public interface MatrixEditorListener {

@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
+ * TODO Faire les commentaires de la classe.
  * Created by madeinqc on 4/11/15.
  */
 public class MatrixWriter {

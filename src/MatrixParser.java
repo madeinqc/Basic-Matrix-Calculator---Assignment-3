@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * TODO Complete this
+ * TODO Faire les commentaires de la classe.
  *
  * @author Nicolas Lamoureux
  *         Code permanent : LAMN19109003

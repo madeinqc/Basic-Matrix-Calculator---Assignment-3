@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -63,7 +65,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
     private JButton addMatricesButton;
     private JButton multiplicateMatricesButton;
     private MatrixEditor secondMatrixEditor;
-    private JTextArea resultTextArea;
+    private MatrixResultPanel resultPanel;
 
     /**
      * Constructeur qui initialise l'application.
@@ -113,22 +115,24 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         addMatricesButton.setVerticalAlignment(JButton.CENTER);
         addMatricesButton.setPreferredSize(new Dimension(50, addMatricesButton.getPreferredSize().height));
         addMatricesButton.setEnabled(false);
+        addMatricesButton.addActionListener(new AddMatricesListener());
         operationsPanel.add(addMatricesButton);
 
-        multiplicateMatricesButton = new JButton("X");
+        multiplicateMatricesButton = new JButton("×");
         multiplicateMatricesButton.setVerticalAlignment(JButton.CENTER);
         multiplicateMatricesButton.setPreferredSize(new Dimension(50, multiplicateMatricesButton.getPreferredSize().height));
         multiplicateMatricesButton.setEnabled(false);
+        multiplicateMatricesButton.addActionListener(new MultiplicateMatricesListener());
         operationsPanel.add(multiplicateMatricesButton);
 
         secondMatrixEditor = new MatrixEditor(matrices);
         secondMatrixEditor.setPreferredSize(new Dimension(460, 385));
         fenetre.getContentPane().add(secondMatrixEditor, BorderLayout.EAST);
 
-        resultTextArea = new JTextArea();
-        resultTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        resultTextArea.setPreferredSize(new Dimension(1000, 245));
-        fenetre.getContentPane().add(resultTextArea, BorderLayout.SOUTH);
+        resultPanel = new MatrixResultPanel();
+        resultPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        resultPanel.setPreferredSize(new Dimension(1000, 245));
+        fenetre.getContentPane().add(resultPanel, BorderLayout.SOUTH);
 
         firstMatrixEditor.addListener(secondMatrixEditor);
         secondMatrixEditor.addListener(firstMatrixEditor);
@@ -189,6 +193,38 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         } else {
             addMatricesButton.setEnabled(false);
             multiplicateMatricesButton.setEnabled(false);
+        }
+    }
+
+    private class AddMatricesListener implements ActionListener {
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            try {
+                resultPanel.setOperation(new MatrixAddition(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
+            } catch (MatriceException e) {
+                // TODO Show error message
+            }
+        }
+    }
+
+    private class MultiplicateMatricesListener implements ActionListener {
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            try {
+                resultPanel.setOperation(new MatrixMultiplication(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
+            } catch (MatriceException e) {
+                // TODO Show error message
+            }
         }
     }
 }
