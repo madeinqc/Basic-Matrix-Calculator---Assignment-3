@@ -9,7 +9,6 @@ public class MatrixWriter {
     public static void writeFile(String fileName, ArrayList<NamedItem<IMatrice>> matrices) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
             for (NamedItem<IMatrice> namedMatrix : matrices) {
-                System.out.println(namedMatrix.getName());
                 if (namedMatrix.getItem() != null) {
                     bufferedWriter.write(namedMatrix.getName());
                     bufferedWriter.write(":");

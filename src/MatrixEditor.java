@@ -258,12 +258,17 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
 
     @Override
     public void matrixRemoved(NamedItem<IMatrice> namedMatrix) {
-        if (matrixSelector.getItemAt(matrixSelector.getSelectedIndex()) == namedMatrix) {
+        if (getSelectedMatrix() == namedMatrix) {
             state = EditorState.initialization;
             updateUIFromState();
         }
         matrices.remove(namedMatrix);
         matrixSelector.removeItem(namedMatrix);
+    }
+
+    @Override
+    public void matrixOperation(MatrixOperation operation) {
+
     }
 
     @Override
@@ -320,7 +325,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
                 }
             } else {
                 state = EditorState.operation;
-                currentMatrix = new Matrice(matrixSelector.getItemAt(matrixSelector.getSelectedIndex()).getItem());
+                currentMatrix = new Matrice(getSelectedMatrix().getItem());
                 matrixGrid = new MatrixGrid(currentMatrix, state);
             }
             updateUIFromState();
@@ -335,7 +340,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            NamedItem<IMatrice> matrix = matrixSelector.getItemAt(matrixSelector.getSelectedIndex());
+            NamedItem<IMatrice> matrix = getSelectedMatrix();
             matrixRemoved(matrix);
             state = EditorState.initialization;
             updateUIFromState();
@@ -468,7 +473,9 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            currentMatrix = matrixGrid.transposed();
+            for (MatrixEditorListener listener : listeners) {
+                listener.matrixOperation(new MatrixTranspose(getSelectedMatrix()));
+            }
         }
     }
 
@@ -482,18 +489,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          */
         @Override
         public void keyTyped(KeyEvent event) {
-            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                try {
-                    double multiplier = Double.parseDouble(multiplicatorTextField.getText());
 
-                    IMatrice result = new Matrice(currentMatrix);
-                    result.produit(multiplier);
-
-                    // TODO Show result in zone 4
-                } catch (NumberFormatException e) {
-                    showError("Le multiplicateur doit être un nombre.");
-                }
-            }
         }
 
         /**
@@ -501,11 +497,21 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          * See the class description for {@link java.awt.event.KeyEvent} for a definition of
          * a key pressed event.
          *
-         * @param e
+         * @param event
          */
         @Override
-        public void keyPressed(KeyEvent e) {
+        public void keyPressed(KeyEvent event) {
+            if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                try {
+                    double multiplier = Double.parseDouble(multiplicatorTextField.getText());
 
+                    for (MatrixEditorListener listener : listeners) {
+                        listener.matrixOperation(new MatrixScalarMultiplication(getSelectedMatrix(), multiplier));
+                    }
+                } catch (NumberFormatException e) {
+                    showError("Le multiplicateur doit être un nombre.");
+                }
+            }
         }
 
         /**
@@ -513,10 +519,10 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          * See the class description for {@link java.awt.event.KeyEvent} for a definition of
          * a key released event.
          *
-         * @param e
+         * @param event
          */
         @Override
-        public void keyReleased(KeyEvent e) {
+        public void keyReleased(KeyEvent event) {
 
         }
     }

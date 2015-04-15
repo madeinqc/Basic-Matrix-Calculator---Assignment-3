@@ -6,5 +6,7 @@ public interface MatrixEditorListener {
     public void matrixAdded(NamedItem<IMatrice> namedMatrix);
     public void matrixRemoved(NamedItem<IMatrice> namedMatrix);
 
+    public void matrixOperation(MatrixOperation operation);
+
     public void stateChanged(MatrixEditor.EditorState state);
 }

@@ -161,7 +161,6 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
     @Override
     public void windowClosing(WindowEvent e) {
         try {
-            System.out.println("run");
             MatrixWriter.writeFile(FIC_MATRICES, firstMatrixEditor.getMatrices());
         } catch (IOException e1) {
             JOptionPane.showMessageDialog(fenetre, "Impossible d'enregistrer les matrices", "ERREUR", JOptionPane.ERROR_MESSAGE);
@@ -184,6 +183,12 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
     }
 
     @Override
+    public void matrixOperation(MatrixOperation operation) {
+        resultPanel.setOperation(operation);
+        resultPanel.updateUIFromOperation();
+    }
+
+    @Override
     public void stateChanged(MatrixEditor.EditorState state) {
         if (firstMatrixEditor != null && secondMatrixEditor != null &&
                 firstMatrixEditor.getState() == MatrixEditor.EditorState.operation &&
@@ -200,12 +205,13 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         /**
          * Invoked when an action occurs.
          *
-         * @param e
+         * @param event
          */
         @Override
         public void actionPerformed(ActionEvent event) {
             try {
                 resultPanel.setOperation(new MatrixAddition(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
+                resultPanel.updateUIFromOperation();
             } catch (MatriceException e) {
                 // TODO Show error message
             }
@@ -216,12 +222,13 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         /**
          * Invoked when an action occurs.
          *
-         * @param e
+         * @param event
          */
         @Override
         public void actionPerformed(ActionEvent event) {
             try {
                 resultPanel.setOperation(new MatrixMultiplication(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
+                resultPanel.updateUIFromOperation();
             } catch (MatriceException e) {
                 // TODO Show error message
             }
