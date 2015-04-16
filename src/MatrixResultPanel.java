@@ -1,5 +1,5 @@
 import javax.swing.*;
-import javax.swing.text.StringContent;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -29,14 +29,20 @@ public class MatrixResultPanel extends JPanel {
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
 
-        matrixNameLabel = new JLabel();
+        matrixNameLabel = new JLabel("",SwingConstants.RIGHT);
         matrixNameLabel.setPreferredSize(new Dimension(150, matrixNameLabel.getPreferredSize().height));
+        matrixNameLabel.setVerticalAlignment(SwingConstants.NORTH);
+        matrixNameLabel.setBorder(new EmptyBorder(20, 0, 0, 0));
+        matrixNameLabel.setForeground(Color.darkGray);
         add(matrixNameLabel, BorderLayout.WEST);
 
         matrixResultTextArea = new JTextArea();
         matrixResultTextArea.setFont(new Font("Courier", Font.BOLD, 12));
+        matrixResultTextArea.setForeground(Color.darkGray);
+        matrixResultTextArea.setBorder(new EmptyBorder(10, 10, 10, 0));
+
         JScrollPane scroll = new JScrollPane(matrixResultTextArea);
-        scroll.setPreferredSize(new Dimension(700, getPreferredSize().height));
+        scroll.setPreferredSize(new Dimension(700, 10));
         scroll.setBorder(BorderFactory.createEmptyBorder());
         add(scroll, BorderLayout.CENTER);
 
@@ -44,6 +50,7 @@ public class MatrixResultPanel extends JPanel {
         saveButton.setPreferredSize(new Dimension(150, saveButton.getPreferredSize().height));
         JPanel saveButtonContainer = new JPanel();
         saveButtonContainer.setBackground(Color.WHITE);
+        saveButtonContainer.setBorder(new EmptyBorder(15, 10, 10, 15));
         saveButtonContainer.add(saveButton);
         add(saveButtonContainer, BorderLayout.EAST);
         saveButton.setVisible(false);
