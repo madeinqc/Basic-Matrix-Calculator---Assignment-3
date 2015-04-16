@@ -163,7 +163,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         try {
             MatrixWriter.writeFile(FIC_MATRICES, firstMatrixEditor.getMatrices());
         } catch (IOException e1) {
-            JOptionPane.showMessageDialog(fenetre, "Impossible d'enregistrer les matrices", "ERREUR", JOptionPane.ERROR_MESSAGE);
+            showError("Impossible d'enregistrer les matrices.");
         }
     }
 
@@ -201,6 +201,10 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         }
     }
 
+    private void showError(String error) {
+        JOptionPane.showMessageDialog(fenetre, error, "ERREUR", JOptionPane.ERROR_MESSAGE);
+    }
+
     private class AddMatricesListener implements ActionListener {
         /**
          * Invoked when an action occurs.
@@ -213,7 +217,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
                 resultPanel.setOperation(new MatrixAddition(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
                 resultPanel.updateUIFromOperation();
             } catch (MatriceException e) {
-                // TODO Show error message
+                showError("Ces matrices ne peut pas être additionnées ensemble.");
             }
         }
     }
@@ -230,7 +234,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
                 resultPanel.setOperation(new MatrixMultiplication(firstMatrixEditor.getSelectedMatrix(), secondMatrixEditor.getSelectedMatrix()));
                 resultPanel.updateUIFromOperation();
             } catch (MatriceException e) {
-                // TODO Show error message
+                showError("Ces matrices ne peuvent pas être multipliées ensemble.");
             }
         }
     }
