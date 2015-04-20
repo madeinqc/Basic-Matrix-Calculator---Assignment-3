@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * TODO Faire les commentaires de la classe.
+ * Cette classe lit le fichier qui contient les matrices sauvegardées et les insère dans une liste.
  *
  * @author Nicolas Lamoureux
  *         Code permanent : LAMN19109003
@@ -19,6 +19,15 @@ import java.util.*;
  * @version 2015-04-09
  */
 public class MatrixParser {
+
+    /**
+     * Effectue la lecture du fichier de matrices et retourne sous forme d'ArrayList les matrices.
+     *
+     * @param fileName      le nom du fichier à lire.
+     * @return              l'ArrayListe construite.
+     *
+     * @throws IOException  lorsque le fichier n'est pas trouvé, mal construit.
+     */
     public static ArrayList<NamedItem<IMatrice>> parseFile(String fileName) throws IOException {
         ArrayList<NamedItem<IMatrice>> matrices = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
@@ -31,6 +40,12 @@ public class MatrixParser {
         return matrices;
     }
 
+    /**
+     * Constuit une matrice à partir d'une chaine de caractères passée en paramètre.
+     * @param matrixString  la chaine de caractère à traiter pour construire la matrice.
+     *
+     * @return              la matrice créée.
+     */
     private static IMatrice createMatrixFromString(String matrixString) {
         String[] data = matrixString.split(";");
         int numLine = Integer.parseInt(data[0]);

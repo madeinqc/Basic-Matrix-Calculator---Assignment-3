@@ -6,8 +6,19 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * TODO Faire les commentaires de la classe.
- * Created by madeinqc on 4/13/15.
+ * Cette classe gère la zone 4 qui affiche les résultats.
+ *
+ * @author Nicolas Lamoureux
+ *         Code permanent : LAMN19109003
+ *         Courriel : lamoureux.nicolas.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @author Marc-Antoine Sauvé
+ *         Code permanent : SAUM13119008
+ *         Courriel : marc-antoine.sauve.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @version 2015-04-20
  */
 public class MatrixResultPanel extends JPanel {
 
@@ -18,25 +29,42 @@ public class MatrixResultPanel extends JPanel {
 
     private ArrayList<MatrixListener> listeners = new ArrayList<>();
 
+    /**
+     * Retourne le mode d'opération actuel de la zone.
+     * @return le mode d'opération actuel de la zone.
+     */
     public MatrixOperation getOperation() {
         return operation;
     }
 
+    /**
+     * Ajoute un listener à la liste.
+     *
+     * @param listener le listener à ajouter à la liste,
+     */
     public void addListener(MatrixListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Enlève un listener de la liste.
+     *
+     * @param listener le listener à enlever.
+     */
     public void removeListener(MatrixListener listener) {
         listeners.remove(listener);
     }
 
+    /**
+     * Modifie le mode d'opération de la zone en fonction de l'opération passée en paramètre.
+     * @param operation     l'opération que doit prendre le mode d'opération.
+     */
     public void setOperation(MatrixOperation operation) {
         this.operation = operation;
     }
 
     /**
-     * Creates a new <code>JPanel</code> with a double buffer
-     * and a flow layout.
+     * Construit la zone Résultats et construit l'ArrayList en fonction de celle-ci passée en paramètre.
      */
     public MatrixResultPanel() {
         setBackground(Color.WHITE);
@@ -70,6 +98,9 @@ public class MatrixResultPanel extends JPanel {
         saveButton.addActionListener(new SaveActionListener());
     }
 
+    /**
+     * Ajuste l'UI en fonction du mode d'opération actuel.
+     */
     public void updateUIFromOperation() {
         if (operation == null) {
             matrixNameLabel.setText("");
@@ -82,6 +113,13 @@ public class MatrixResultPanel extends JPanel {
         }
     }
 
+    /**
+     * Construit la matrice qui sera affichée en fonction de celle-ci passée en paramètre.
+     *
+     * @param result    la matrice passée en paramètre.
+     *
+     * @return          la string qui affichera le résultat de la matrice.
+     */
     private String getPrettyTextMatrice(IMatrice result) {
         String[][] nums = new String[result.getNumLignes()][result.getNumColonnes()];
         int maxLength = 0;
@@ -127,9 +165,12 @@ public class MatrixResultPanel extends JPanel {
         return sb.toString();
     }
 
+    /**
+     * Implémente l'action à prendre lorsque le bouton Sauvegarder est appuyé.
+     */
     private class SaveActionListener implements ActionListener {
         /**
-         * Invoked when an action occurs.
+         * Gère l'action à prendre lorsque le bouton Sauvegarder est appuyé.
          *
          * @param e
          */

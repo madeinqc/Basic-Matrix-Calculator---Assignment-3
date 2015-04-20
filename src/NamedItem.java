@@ -1,6 +1,17 @@
 /**
- * TODO Faire les commentaires de la classe.
- * Created by madeinqc on 4/11/15.
+ *
+ *
+ * @author Nicolas Lamoureux
+ *         Code permanent : LAMN19109003
+ *         Courriel : lamoureux.nicolas.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @author Marc-Antoine Sauvé
+ *         Code permanent : SAUM13119008
+ *         Courriel : marc-antoine.sauve.2@courrier.uqam.ca
+ *         Cours : INF2120-10
+ *
+ * @version 2015-04-20
  */
 public class NamedItem<T> {
 

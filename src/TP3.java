@@ -6,10 +6,11 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 
 /**
- * Cette classe represente l'interface de calcule de matrices.
+ * Cette classe represente l'interface de calcul de matrices.
  *
  * @author Nicolas Lamoureux
  *         Code permanent : LAMN19109003
@@ -21,7 +22,7 @@ import javax.swing.*;
  *         Courriel : marc-antoine.sauve.2@courrier.uqam.ca
  *         Cours : INF2120-10
  *
- * @version 2015-04-09
+ * @version 2015-04-20
  */
 public class TP3 extends WindowAdapter implements MatrixListener {
 
@@ -111,19 +112,24 @@ public class TP3 extends WindowAdapter implements MatrixListener {
         operationsPanel.setPreferredSize(new Dimension(80, 385));
         fenetre.getContentPane().add(operationsPanel, BorderLayout.CENTER);
 
+        JPanel addMatricesContainer = new JPanel();
+        addMatricesContainer.setLayout(new BoxLayout(addMatricesContainer, BoxLayout.PAGE_AXIS));
+        addMatricesContainer.setBorder(new EmptyBorder(100, 0, 0, 0));
         addMatricesButton = new JButton("+");
         addMatricesButton.setVerticalAlignment(JButton.CENTER);
         addMatricesButton.setPreferredSize(new Dimension(50, addMatricesButton.getPreferredSize().height));
         addMatricesButton.setEnabled(false);
         addMatricesButton.addActionListener(new AddMatricesListener());
-        operationsPanel.add(addMatricesButton);
+        addMatricesContainer.add(addMatricesButton);
+        addMatricesContainer.add(Box.createRigidArea(new Dimension(12, 20)));
 
         multiplicateMatricesButton = new JButton("×");
         multiplicateMatricesButton.setVerticalAlignment(JButton.CENTER);
         multiplicateMatricesButton.setPreferredSize(new Dimension(50, multiplicateMatricesButton.getPreferredSize().height));
         multiplicateMatricesButton.setEnabled(false);
         multiplicateMatricesButton.addActionListener(new MultiplicateMatricesListener());
-        operationsPanel.add(multiplicateMatricesButton);
+        addMatricesContainer.add(multiplicateMatricesButton);
+        operationsPanel.add(addMatricesContainer);
 
         secondMatrixEditor = new MatrixEditor(matrices);
         secondMatrixEditor.setPreferredSize(new Dimension(460, 385));
