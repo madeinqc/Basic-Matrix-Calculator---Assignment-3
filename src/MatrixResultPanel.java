@@ -1,6 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * TODO Faire les commentaires de la classe.
@@ -13,8 +16,18 @@ public class MatrixResultPanel extends JPanel {
     private final JButton saveButton;
     private MatrixOperation operation;
 
+    private ArrayList<MatrixListener> listeners = new ArrayList<>();
+
     public MatrixOperation getOperation() {
         return operation;
+    }
+
+    public void addListener(MatrixListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(MatrixListener listener) {
+        listeners.remove(listener);
     }
 
     public void setOperation(MatrixOperation operation) {
@@ -54,6 +67,7 @@ public class MatrixResultPanel extends JPanel {
         saveButtonContainer.add(saveButton);
         add(saveButtonContainer, BorderLayout.EAST);
         saveButton.setVisible(false);
+        saveButton.addActionListener(new SaveActionListener());
     }
 
     public void updateUIFromOperation() {
@@ -113,4 +127,17 @@ public class MatrixResultPanel extends JPanel {
         return sb.toString();
     }
 
+    private class SaveActionListener implements ActionListener {
+        /**
+         * Invoked when an action occurs.
+         *
+         * @param e
+         */
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for (MatrixListener listener : listeners) {
+                listener.saveMatrix(operation.getResult());
+            }
+        }
+    }
 }

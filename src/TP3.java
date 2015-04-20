@@ -23,7 +23,7 @@ import javax.swing.*;
  *
  * @version 2015-04-09
  */
-public class TP3 extends WindowAdapter implements MatrixEditorListener {
+public class TP3 extends WindowAdapter implements MatrixListener {
 
     /************************************
      * CONSTANTES DE CLASSE
@@ -132,6 +132,7 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
         resultPanel = new MatrixResultPanel();
         resultPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         resultPanel.setPreferredSize(new Dimension(1000, 245));
+        resultPanel.addListener(firstMatrixEditor);
         fenetre.getContentPane().add(resultPanel, BorderLayout.SOUTH);
 
         firstMatrixEditor.addListener(secondMatrixEditor);
@@ -179,6 +180,11 @@ public class TP3 extends WindowAdapter implements MatrixEditorListener {
 
     @Override
     public void matrixRemoved(NamedItem<IMatrice> namedMatrix) {
+
+    }
+
+    @Override
+    public void saveMatrix(IMatrice matrix) {
 
     }
 

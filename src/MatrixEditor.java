@@ -21,7 +21,7 @@ import java.util.ArrayList;
  *
  * @version 2015-04-09
  */
-public class MatrixEditor extends JPanel implements MatrixEditorListener {
+public class MatrixEditor extends JPanel implements MatrixListener {
 
     private JTextArea initializationTextArea;
     private MatrixGrid matrixGrid = null;
@@ -31,7 +31,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
     private JButton confirmNewMatrixButton;
     private JLabel multiplicatorLabel;
     private JPanel matrixPanel;
-    private ArrayList<MatrixEditorListener> listeners = new ArrayList<>();
+    private ArrayList<MatrixListener> listeners = new ArrayList<>();
 
     public enum EditorState {
         initialization, operation, editing, newMatrix
@@ -68,11 +68,11 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
         return state;
     }
 
-    public void addListener(MatrixEditorListener listener) {
+    public void addListener(MatrixListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(MatrixEditorListener listener) {
+    public void removeListener(MatrixListener listener) {
         listeners.remove(listener);
     }
 
@@ -131,7 +131,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
         matrixPanel.validate();
         matrixPanel.repaint();
 
-        for (MatrixEditorListener listener : listeners) {
+        for (MatrixListener listener : listeners) {
             if (listener != null) {
                 listener.stateChanged(state);
             }
@@ -237,14 +237,13 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
         JOptionPane.showMessageDialog(this, error, "ERREUR", JOptionPane.ERROR_MESSAGE);
     }
 
-    private void saveCurrentMatrix(String name) {
-        NamedItem<IMatrice> namedMatrix = new NamedItem<>(name, currentMatrix);
+    public void saveMatrix(String name, IMatrice matrix) {
+        NamedItem<IMatrice> namedMatrix = new NamedItem<>(name, matrix);
 
         matrices.add(namedMatrix);
         matrixAdded(namedMatrix);
-        matrixSelector.setSelectedIndex(matrixSelector.getItemCount() - 1);
 
-        for (MatrixEditorListener listener : listeners) {
+        for (MatrixListener listener : listeners) {
             if (listener != null) {
                 listener.matrixAdded(namedMatrix);
             }
@@ -264,6 +263,11 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
         }
         matrices.remove(namedMatrix);
         matrixSelector.removeItem(namedMatrix);
+    }
+
+    @Override
+    public void saveMatrix(IMatrice matrix) {
+        saveMatrix(getNewMatrixName(), matrix);
     }
 
     @Override
@@ -345,7 +349,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
             state = EditorState.initialization;
             updateUIFromState();
 
-            for (MatrixEditorListener listener : listeners) {
+            for (MatrixListener listener : listeners) {
                 if (listener != null) {
                     listener.matrixRemoved(matrix);
                 }
@@ -403,7 +407,8 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
                 if (matrixGrid.ValidateAndFillMatrix()) {
                     String name = getNewMatrixName();
                     if (name != null) {
-                        saveCurrentMatrix(name);
+                        saveMatrix(name, currentMatrix);
+                        matrixSelector.setSelectedIndex(matrixSelector.getItemCount() - 1);
                         state = EditorState.operation;
                         matrixGrid.setState(state);
                         matrixGrid.updateUIFromState();
@@ -473,7 +478,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (MatrixEditorListener listener : listeners) {
+            for (MatrixListener listener : listeners) {
                 listener.matrixOperation(new MatrixTranspose(getSelectedMatrix()));
             }
         }
@@ -505,7 +510,7 @@ public class MatrixEditor extends JPanel implements MatrixEditorListener {
                 try {
                     double multiplier = Double.parseDouble(multiplicatorTextField.getText());
 
-                    for (MatrixEditorListener listener : listeners) {
+                    for (MatrixListener listener : listeners) {
                         listener.matrixOperation(new MatrixScalarMultiplication(getSelectedMatrix(), multiplier));
                     }
                 } catch (NumberFormatException e) {
