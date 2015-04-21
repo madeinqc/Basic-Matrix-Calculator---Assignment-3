@@ -114,7 +114,7 @@ public class TP3 extends WindowAdapter implements MatrixListener {
 
         JPanel addMatricesContainer = new JPanel();
         addMatricesContainer.setLayout(new BoxLayout(addMatricesContainer, BoxLayout.PAGE_AXIS));
-        addMatricesContainer.setBorder(new EmptyBorder(100, 0, 0, 0));
+        addMatricesContainer.setBorder(new EmptyBorder(120, 0, 0, 0));
         addMatricesButton = new JButton("+");
         addMatricesButton.setVerticalAlignment(JButton.CENTER);
         addMatricesButton.setPreferredSize(new Dimension(50, addMatricesButton.getPreferredSize().height));

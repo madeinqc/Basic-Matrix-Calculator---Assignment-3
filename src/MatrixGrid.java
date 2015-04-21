@@ -101,7 +101,14 @@ public class MatrixGrid extends JPanel {
     public void updateUIFromState() {
         for (int i = 0; i < matrix.getNumLignes(); i++) {
             for (int j = 0; j < matrix.getNumColonnes(); j++) {
-                textFields[i][j].setEnabled(state == MatrixEditor.EditorState.editing);
+                if (state == MatrixEditor.EditorState.editing) {
+                    textFields[i][j].setEnabled(true);
+                    textFields[i][j].setBackground(Color.YELLOW);
+                } else {
+                    textFields[i][j].setEnabled(false);
+                    textFields[i][j].setDisabledTextColor(Color.BLACK);
+                    textFields[i][j].setBackground(Color.WHITE);
+                }
             }
         }
     }
