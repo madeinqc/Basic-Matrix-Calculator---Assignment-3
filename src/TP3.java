@@ -1635,6 +1635,8 @@ class MatrixResultPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             for (MatrixListener listener : listeners) {
                 listener.saveMatrix(operation.getResult());
+                MatrixResultPanel.this.operation = null;
+                MatrixResultPanel.this.updateUIFromOperation();
             }
         }
     }
