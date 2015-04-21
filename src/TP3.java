@@ -1538,7 +1538,6 @@ class MatrixResultPanel extends JPanel {
         matrixResultTextArea.setFont(new Font("Courier", Font.BOLD, 12));
         matrixResultTextArea.setForeground(Color.darkGray);
         matrixResultTextArea.setBorder(new EmptyBorder(10, 10, 10, 0));
-        matrixResultTextArea.setEditable(false);
 
         JScrollPane scroll = new JScrollPane(matrixResultTextArea);
         scroll.setPreferredSize(new Dimension(700, 10));
